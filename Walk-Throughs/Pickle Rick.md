@@ -130,6 +130,8 @@ Nikto is a scanner for common web vulnerabilities. A couple of interesting thing
 * Despite the simple page, it looks like the server is running PHP. So if I can figure out how to upload something, I've got a good shot at popping a reverse shell.
 * There's a /login.php file. Now THAT looks interesting!
 
+### References
+
 * [TryHackMe Pickle Rick CTF Walkthrough](https://razrexe.medium.com/tryhackme-pickle-rick-ctf-walkthrough-9ed36eff17fe)
 
 ## Flag 1
@@ -163,7 +165,7 @@ mr. meeseek hair
 
 ## Flag 2
 
-Let's continue poking around. Before we go back to /portal.php, let's take a look at /clue.txt
+Let's continue poking around. Before we go back to /portal.php, let's take a look at /clue.txt.
 
 ```/clue.txt
 Look around the file system for the other ingredient.
