@@ -1,0 +1,31 @@
+name: Update markdown document feed
+
+on: push
+
+jobs:
+  update-feed:
+    name: Update feed.rss
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download dependencies
+        run: |
+          sudo apt install pandoc
+      - name: Regenerate feed.rss
+        env:
+          FEED_TITLE: "Cardboard Iguana Security"
+          FEED_LINK: "https://www.cardboard-iguana.com"
+          FEED_DESCRIPTION: "Latest hacking notes, CTF walk-throughs, and random thoughts from Cardboard Iguana Security."
+          FEED_COPYRIGHT: "© Nathan Acks"
+        run: |
+          ./feed.sh > feed.rss
+      - name: Commit changes to repository
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add -A -v
+          git commit -m "Auto-update RSS feed" || true
+          git push
