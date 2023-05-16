@@ -1,4 +1,4 @@
-# HackTheBox Night: Union
+# Union
 
 **machine:** https://app.hackthebox.com/machines/418
 
