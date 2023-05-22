@@ -77,12 +77,13 @@ Targeted scanners can be more useful, however:
 
 * The `auxiliary/scanner/discovery/udp_sweep` module will probe for common UDP services.
 * The `auxiliary/scanner/http/http_version` module will give you HTTP server version information.
-* The `auxiliary/scanner/smb/smb_login` module will allow you to bruteforce Samba logins (username and/or password) using a wordlist(s).
+* The `auxiliary/scanner/smb/smb_login` module will allow you to conduct brute-force and password spraying attacks against Samba logins.
 
 Metasploit has a variety of Samba/CIFS scanners too (use `search scanner/smb` to list them), as well as modules for basic enumeration such as `smtp_version`/`smtp_enum` (for SMTP) and `mysql_sql` (for MySQL, though this seems to just be a thin wrapper around the MySQL command line client).
 
 #### Additional Resources
 * [Metasploit Documentation: Scanning and Managing Hosts](https://docs.rapid7.com/metasploit/scanning-and-managing-hosts/)
+* [TryHackMe: Password Attacks](https://tryhackme.com/room/passwordattacks)
 
 ### Payloads
 Payloads can be divided into:
