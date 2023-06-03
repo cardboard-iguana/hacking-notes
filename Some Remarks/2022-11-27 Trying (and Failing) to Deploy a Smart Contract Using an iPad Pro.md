@@ -1,6 +1,6 @@
 # Trying (and Failing) to Deploy a Smart Contract Using an iPad Pro
 
-* **date:** 2022-11-27
+**date:** 2022-11-27
 
 My personal project this weekend was to deploy a smart contract to the Ethereum blockchain. The motivation here was to be able to mint an NFT (really, several NFTs) for use as an avatar on Farcaster, an alternative to Twitter that I've been experimenting with for a few weeks now. Using an NFT as your avatar on Farcaster adds a "purple checkmark" to your account, a spoof on Twitter's infamous blue checkmark.
 
