@@ -1,11 +1,17 @@
 # Enumerate Windows Environments
 ## Important Commands
+* `arp -a` — display the ARP cache (find other machines on the network!)
 * `cmdkey /list` — show saved credentials
 * `driverquery` — list installed drivers
 * `hostname` — return system hostname
+* `net accounts` — local machine policies
+* `net accounts /domain` — domain policies
+* `net group` — list domain groups
 * `net group "Domain Admins" /domain` — list domain admins
 * `net localgroup` — list all (local) groups
-* `net localgroup $GROUP` — list user in group `$GROUP`
+* `net localgroup administrators` — list local admins
+* `net share` — list all shares (made available by the current machine)
+* `net start` — list all running services (lots!)
 * `net user` — list all (local) users
 * `net user $USERNAME` — get details for user `$USERNAME`
 * `netstat` — query open/listening ports
@@ -14,16 +20,14 @@
 * `sc` — query (and manipulate) services (conflicts with a PowerShell built-in!)
 * `schtasks` — list scheduled tasks
 * `systeminfo` — return system info
+* `whoami /groups` — list current user’s groups
 * `whoami /priv` — current user + privileges
 
+### Additional Resources
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
+
 ## net
-Windows’ `net` command can be used to list running services.
-
-```powershell
-net start
-```
-
-It can *also* be used to *manipulate* user and group information (*if* you already have admin/SYSTEM permission)! For example:
+Windows’ `net` command can be used to *manipulate* user and group information (*if* you already have admin/SYSTEM permission)! For example:
 
 ```powershell
 # Change a user's password
@@ -43,7 +47,7 @@ net group "Domain Admins" $USERNAME /add /domain
 * [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
 
 ## netstat
-The `netstat` command on Windows *almost* works exactly like its Linux equivalent. The difference is that `-o` displays the PID of the process using the connection on Windows (which, IMHO, is more useful than `-o` on Linux).
+The `netstat` command on Windows *almost* works exactly like its Linux equivalent. The difference is that `-ob` displays the PID and binary of the process using the connection on Windows.
 
 If you know the PID of a process, you can use `netstat` + `findstr` to quickly find out what ports its listening on:
 
@@ -54,6 +58,7 @@ netstat -noa | findstr "LISTENING" | findstr "$PID"
 ### Additional Resources
 * [Using “netstat”](./Using%20%22netstat%22.md)
 * [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
 
 ## Querying the Registry
 ```powershell
@@ -88,15 +93,16 @@ systeminfo | findstr Domain
 ## wmic
 The `wmic` command is extremely useful, but is also deprecated (*because* of its usefulness to attackers!). It can be used on Windows 10 21H1 and earlier. For later systems, PowerShell command-lets will need to be used instead (which increases the risk that activity will be logged).
 
-* `wmic product get name,version` — list all installed software (but misses 32-bit applications installed on a 64-bit OS)
+* `wmic product get name,version,vendor` — list all installed software (but misses 32-bit applications installed on a 64-bit OS)
 * `wmic service get name,displayname,pathname,startmode` — list all services
-* `wmic qfe get Caption,Description,HotFixID,InstalledOn` — list installed updates
+* `wmic qfe get caption,description,hotfixid,installedon` — list installed updates
 * `wimc service list brief` — another way of listing services
-* `wmic service where "name like '$SERVICE_NAME'" get Name,PathName` — get information about a particular service
+* `wmic service where "name like '$SERVICE_NAME'" get name,pathname` — get information about a particular service
 * `wmic /namespace:\root\securitycenter2 path antivirusproduct` — enumerate antivirus
 
 ### Additional Resources
 * [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
 
 ## PowerShell
 ```powershell
@@ -181,7 +187,7 @@ When checking to see if Sysmon is running, you can also examine the `HKLM\SOFTWA
 * [WinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS)
 * [PowerUp](https://github.com/PowerShellMafia/PowerSploit/tree/master/Privesc)
 * [Windows Exploit Suggester](https://github.com/AonCyberLabs/Windows-Exploit-Suggester)
-* Metasploit -> [Using Metasploit](./Using%20Metasploit.md)
+* Metasploit → [Using Metasploit](./Using%20Metasploit.md)
 
 ### Notes
 * WinPEAS is detected and quarantined by Microsoft Defender (service `windefend`) by default.

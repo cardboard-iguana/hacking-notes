@@ -1,12 +1,17 @@
-# Using "netstat"
+# Using “netstat”
+The `netstat` command is found on both Linux and Windows, though it has slightly different options.
 
-## Flags
+| Linux |  Windows | Description                                       |
+| -----:| --------:|:------------------------------------------------- |
+|  `-a` |     `-a` | Shows all sockets (listening and established)     |
+|  `-i` |          | Shows per interface statistics                    |
+|  `-l` |          | Show *only* listening ports                       |
+|  `-n` |     `-n` | Do *not* resolve IP addresses or port numbers     |
+|  `-p` |    `-ob` | Show PID and binary using the socket (needs root) |
+|  `-s` |          | Show protocol statistics                          |
+|  `-t` | `-p TCP` | Show TCP sockets only                             |
+|  `-u` | `-p UDP` | Show UDP sockets only                             |
+|  `-x` |          | Show UNIX sockets (kernel-only "network") only    |
 
-* `-a` - all listening parts and established connections
-* `-i` - per interface statistics
-* `-l` - only listening ports
-* `-n` - do not attempt to resolve domain names
-* `-p` - protocol and service information, requires root to see everything
-* `-s` - protocol statistics
-* `-t` - show TCP ports only
-* `-u` - show UDP ports only
+## Additional Resources
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)

@@ -42,7 +42,16 @@ dig @$NAME_SERVER $DOMAIN $QUERY_TYPE
 dig @8.8.8.8 microsoft.com A
 dig @1.1.1.1 tryhackme.com
 dig          google.com    MX
+
+# If the DNS server allows the request of zone transfer
+# information, then it's possible to quickly enumerate *all*
+# DNS information associated with a given domain
+#
+dig @$NAME_SERVER $DOMAIN -t AXFR
 ```
+
+### Additional Resources
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
 
 ## grep
 ```bash
@@ -119,5 +128,9 @@ If credentials are saved for a particular user (use `cmdkey /list` to check), th
 ## whoami
 Windows’ `whoami` supports a couple of useful flags:
 
-* `/all` - return detailed user information.
-* `/privs` - return information about current user privileges.
+* `/all` — return detailed user information
+* `/groups` — return the current user’s groups
+* `/privs` — return information about current user privileges
+
+### Additional Resources
+* [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
