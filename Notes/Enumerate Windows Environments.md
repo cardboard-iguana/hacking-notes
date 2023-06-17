@@ -7,7 +7,7 @@
 * `net accounts` — local machine policies
 * `net accounts /domain` — domain policies
 * `net group` — list domain groups
-* `net group "Domain Admins" /domain` — list domain admins
+* `net group “Domain Admins” /domain` — list domain admins
 * `net localgroup` — list all (local) groups
 * `net localgroup administrators` — list local admins
 * `net share` — list all shares (made available by the current machine)
@@ -26,25 +26,43 @@
 ### Additional Resources
 * [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
 
-## net
-Windows’ `net` command can be used to *manipulate* user and group information (*if* you already have admin/SYSTEM permission)! For example:
+## Potentially Interesting Files
+### PowerShell History
+View PowerShell’s history.
 
 ```powershell
-# Change a user's password
-#
-net user $USERNAME $PASSWORD
-
-# Add a user to a domain
-#
-net user $USERNAME /add /domain
-
-# Make a user a domain admin
-#
-net group "Domain Admins" $USERNAME /add /domain
+type $Env:USERPROFILE\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
 ```
 
-### Additional Resources
-* [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
+Use `%USERPROFILE%` instead of `$Env:USERPROFILE` if running from `cmd.exe`.
+
+#### Additional Resources
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
+
+### Unattended Windows Installation Data
+Unattended Windows installations still need an administrative account; credentials can be left in one of the following files (if not cleaned up):
+
+* `C:\Unattend.xml`
+* `C:\Windows\Panther\Unattend.xml`
+* `C:\Windows\Panther\Unattend\Unattend.xml`
+* `C:\Windows\sSystem32\sysprep.inf`
+* `C:\Windows\system32\sysprep\sysprep.xml`
+
+Look for the `<Credentials/>` block.
+
+#### Additional Resources
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
+
+### IIS Configuration Data
+Placed where IIS stores passwords:
+
+* `C:\inetpub\wwwroot\web.config`
+* `C:\Windows\Microsoft.NET\Framework64\$SOME_VERSION_STRING\Config\web.config`
+
+Look for the `connectionString` directive.
+
+#### Additional Resources
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
 
 ## netstat
 The `netstat` command on Windows *almost* works exactly like its Linux equivalent. The difference is that `-ob` displays the PID and binary of the process using the connection on Windows.
@@ -52,7 +70,7 @@ The `netstat` command on Windows *almost* works exactly like its Linux equivalen
 If you know the PID of a process, you can use `netstat` + `findstr` to quickly find out what ports its listening on:
 
 ```powershell
-netstat -noa | findstr "LISTENING" | findstr "$PID"
+netstat -noa | findstr “LISTENING” | findstr “$PID”
 ```
 
 ### Additional Resources
@@ -74,9 +92,9 @@ Registry paths will typically start with `HKLM` (HKey Local Machine), `HKCU` (HK
 Use `findstr` to filter the output of `systeminfo`:
 
 ```powershell
-systeminfo | findstr /B /C:"OS Name" `
-                        /C:"OS Version" `
-                        /C:"System Type"
+systeminfo | findstr /B /C:”OS Name” `
+                        /C:”OS Version” `
+                        /C:”System Type”
 ```
 
 This can be used to semi-reliably determine if a machine is part of a domain.
@@ -97,12 +115,14 @@ The `wmic` command is extremely useful, but is also deprecated (*because* of its
 * `wmic service get name,displayname,pathname,startmode` — list all services
 * `wmic qfe get caption,description,hotfixid,installedon` — list installed updates
 * `wimc service list brief` — another way of listing services
-* `wmic service where "name like '$SERVICE_NAME'" get name,pathname` — get information about a particular service
+* `wmic service where “name like ‘$SERVICE_NAME’” get name,pathname` — get information about a particular service
 * `wmic /namespace:\root\securitycenter2 path antivirusproduct` — enumerate antivirus
+* `wmic useraccount get name,sid` — Display SIDs for all (local) users
 
 ### Additional Resources
 * [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
 * [TryHackMe: Enumeration](https://tryhackme.com/room/enumerationpe)
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
 
 ## PowerShell
 ```powershell
@@ -112,7 +132,7 @@ Get-ADUser -Filter *
 
 # List AD users within a particular LDAP subtree
 #
-Get-ADUser -Filter * -SearchBase "CN=Users,DC=example,DC=com"
+Get-ADUser -Filter * -SearchBase “CN=Users,DC=example,DC=com”
 
 # Enumerate antivirus
 #
@@ -152,21 +172,21 @@ Get-NetFirewallRule | select DisplayName,Enabled,Description
 #
 Test-NetConnection -ComputerName $IP_OR_HOSTNAME -Port $PORT
 
-(New-Object System.Net.Sockets.TcpClient("$IP_OR_HOSTNAME", "$PORT")).Connected
+(New-Object System.Net.Sockets.TcpClient(“$IP_OR_HOSTNAME”, “$PORT”)).Connected
 
 # List all current Windows logs
 #
 Get-EventLog -List
 
 # Sysmon is dangerous for an attacker! Three ways to check if
-# it's running...
+# it’s running...
 #
-Get-Process | Where-Object { $_.ProcessName -eq "Sysmon" }
+Get-Process | Where-Object { $_.ProcessName -eq “Sysmon” }
 
 Get-CimInstance win32_service `
-	-Filter "Description = 'System Monitor service'"
+	-Filter “Description = ‘System Monitor service’”
 
-Get-Service | where-object {$_.DisplayName -like "sysm"}
+Get-Service | where-object {$_.DisplayName -like “sysm”}
 
 # List hidden directories
 #
@@ -182,6 +202,7 @@ When checking to see if Sysmon is running, you can also examine the `HKLM\SOFTWA
 ### Additional Resources
 * [TryHackMe: The Lay of the Land](https://tryhackme.com/room/thelayoftheland)
 * [Using PowerShell](./Using%20PowerShell.md)
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
 
 ## Useful Scripts
 * [WinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS)

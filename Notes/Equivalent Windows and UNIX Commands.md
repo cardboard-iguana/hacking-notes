@@ -18,6 +18,15 @@
 * hostname ↔ hostname
 * whoami ↔ whoami
 
+You can also manipulate command input and output in a similar fashion:
+
+* Redirect to a file: `>`
+* Pipe the output of one command into another: `|`
+* Run commands in sequence, stopping at the first failure: `&` (Windows) or `&&` (*NIX)
+
+### Additional Resources
+* [TryHackMe: Windows Privilege Escalation](https://tryhackme.com/room/windowsprivesc20)
+
 ## cat
 ```bash
 # Use cat to add line numbers to a file!
@@ -44,7 +53,7 @@ dig @1.1.1.1 tryhackme.com
 dig          google.com    MX
 
 # If the DNS server allows the request of zone transfer
-# information, then it's possible to quickly enumerate *all*
+# information, then it’s possible to quickly enumerate *all*
 # DNS information associated with a given domain
 #
 dig @$NAME_SERVER $DOMAIN -t AXFR
@@ -69,7 +78,7 @@ grep $STRING -r $DIRECTORY
 # Use findstr to filter the output of systeminfo (or another
 # command):
 #
-systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
+systeminfo | findstr /B /C:”OS Name” /C:”OS Version” /C:”System Type”
 ```
 
 ## dir
@@ -122,6 +131,7 @@ runas /user:$USERNAME $EXECUTABLE
 
 If credentials are saved for a particular user (use `cmdkey /list` to check), then the `/savecred` flag will apply them automatically!
 
+### Additional Resources
 * [Windows: Run as Different User](https://www.shellhacks.com/windows-run-as-different-user/)
 * [Windows runas command syntax and examples](https://www.windows-commandline.com/windows-runas-command-prompt/)
 
