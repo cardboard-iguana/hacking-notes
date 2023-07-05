@@ -53,7 +53,7 @@ dig @1.1.1.1 tryhackme.com
 dig          google.com    MX
 
 # If the DNS server allows the request of zone transfer
-# information, then it’s possible to quickly enumerate *all*
+# information, then it's possible to quickly enumerate *all*
 # DNS information associated with a given domain
 #
 dig @$NAME_SERVER $DOMAIN -t AXFR
@@ -78,7 +78,7 @@ grep $STRING -r $DIRECTORY
 # Use findstr to filter the output of systeminfo (or another
 # command):
 #
-systeminfo | findstr /B /C:”OS Name” /C:”OS Version” /C:”System Type”
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
 ```
 
 ## dir
@@ -131,9 +131,12 @@ runas /user:$USERNAME $EXECUTABLE
 
 If credentials are saved for a particular user (use `cmdkey /list` to check), then the `/savecred` flag will apply them automatically!
 
+**Note:** When using `runas` to start a reverse shell, `whoami` will always return the user who called the `runas` command, *even if the shell is running as under a different user’s privileges*.  Thus, elevating privileges using `runas` is a blind attack… You won’t know if the privilege escalation *actually* worked until you try a command that requires more privileges!
+
 ### Additional Resources
 * [Windows: Run as Different User](https://www.shellhacks.com/windows-run-as-different-user/)
 * [Windows runas command syntax and examples](https://www.windows-commandline.com/windows-runas-command-prompt/)
+* [TryHackMe: Lateral Movement and Pivoting](https://tryhackme.com/room/lateralmovementandpivoting)
 
 ## whoami
 Windows’ `whoami` supports a couple of useful flags:

